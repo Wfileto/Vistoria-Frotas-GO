@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist de Veículos GO - GEFROTAS - SEAD/GO</title>
+    <style>
+        :root {
+            --primary-color: #005691;
+            --accent-color: #008837;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #cccccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header img {
+            max-width: 90px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .sub-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .main-title {
+            font-size: 24px;
+            color: #111;
+            margin: 5px 0 0 0;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .btn-option {
+            flex: 1;
+            margin: 0 10px;
+            font-size: 18px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            background-color: #f8f9fa;
+        }
+
+        .btn-option.selected-sim {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .btn-option.selected-nao {
+            background-color: #d9534f;
+            color: white;
+            border-color: #d9534f;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question-card {
+            background-color: #f8f9fa;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .counter-badge {
+            font-size: 12px;
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #6c757d;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <p class="sub-header">GEFROTAS - SEAD/GO</p>
+        <h1 class="main-title">Checklist de Veículos GO</h1>
+    </div>
+
+    <!-- TELA 1: CADASTRO DO VEÍCULO -->
+    <div id="step-1" class="step active">
+        <h3>Identificação do Veículo e Contrato</h3>
+        <form id="vehicle-form" class="form-grid">
+            <div class="form-group full-width">
+                <label>1. Secretaria / Órgão / Entidade *</label>
+                <input type="text" id="sec" required>
+            </div>
+            <div class="form-group">
+                <label>2. Unidade Administrativa Física *</label>
+                <input type="text" id="unidade" required>
+            </div>
+            <div class="form-group">
+                <label>3. Município de Uso *</label>
+                <input type="text" id="municipio" required>
+            </div>
+            <div class="form-group">
+                <label>4. Nome do Gestor *</label>
+                <input type="text" id="gestor" required>
+            </div>
+            <div class="form-group">
+                <label>5. Veículo Próprio ou Locado *</label>
+                <select id="vinculo" onchange="toggleVinculoRules()" required>
+                    <option value="">Selecione...</option>
+                    <option value="Proprio">Próprio</option>
+                    <option value="Locado">Locado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>6. Marca *</label>
+                <input type="text" id="marca" required>
+            </div>
+            <div class="form-group">
+                <label>7. Modelo *</label>
+                <input type="text" id="modelo" required>
+            </div>
+            <div class="form-group">
+                <label>8. Ano de Fabricação *</label>
+                <input type="number" id="ano" required>
+            </div>
+            <div class="form-group">
+                <label>9. Placa *</label>
+                <input type="text" id="placa" required>
+            </div>
+            <div class="form-group">
+                <label>10. Renavam *</label>
+                <input type="number" id="renavam" required>
+            </div>
+            <div class="form-group">
+                <label>11. N.º do Chassi *</label>
+                <input type="text" id="chassi" required>
+            </div>
+            <div class="form-group" id="group-tombamento">
+                <label id="lbl-tombamento">12. N.º de Tombamento (Veículo Próprio)</label>
+                <input type="text" id="tombamento">
+            </div>
+            <div class="form-group" id="group-sei">
+                <label id="lbl-sei">13. Processo SEI (Veículo Locado)</label>
+                <input type="text" id="sei">
+            </div>
+            <div class="form-group">
+                <label>14. Nome do Fornecedor / Locadora</label>
+                <input type="text" id="fornecedor">
+            </div>
+            <div class="form-group">
+                <label>15. Data Vencimento Contrato</label>
+                <input type="date" id="vencimento">
+            </div>
+            <div class="form-group">
+                <label>16. N.º do Aditivo</label>
+                <input type="text" id="aditivo">
+            </div>
+            <div class="form-group">
+                <label>17-18. Classificação *</label>
+                <select id="classificacao" required>
+                    <option value="Bom">Bom</option>
+                    <option value="Regular/Recuperavel">Regular/Recuperável</option>
+                    <option value="Antieconomico">Antieconômico</option>
+                    <option value="Sucata">Sucata</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>19. Hodômetro (km real) *</label>
+                <input type="number" id="km" required>
+            </div>
+            <div class="form-group full-width">
+                <label>Status Operacional (20-23):</label>
+                <select id="status_op" required>
+                    <option value="Em operação diária">20. Em operação diária</option>
+                    <option value="Reserva técnica">21. Reserva técnica</option>
+                    <option value="Em oficina">22. Em oficina</option>
+                    <option value="Paralisado/Aguardando peça">23. Paralisado/Aguardando peça</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>24. Inservível? *</label>
+                <select id="inservivel" onchange="toggleInservivelRules()" required>
+                    <option value="Nao">NÃO</option>
+                    <option value="Sim">SIM</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label id="lbl-leilao">25. Procedimento para Leilão</label>
+                <input type="text" id="leilao">
+            </div>
+            <div class="form-group full-width" style="margin-top: 15px;">
+                <button type="button" class="btn-primary" onclick="startAudit()">Iniciar Registro de Frotas</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TELA 2: REGISTRO DE FROTAS (PERGUNTAS PROGRESSIVAS) -->
+    <div id="step-2" class="step">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3>Registro de Frotas</h3>
+            <span class="counter-badge" id="counter-display">Pergunta 1 de 51</span>
+        </div>
+        
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question-card">
+            <p class="question-text" id="question-text">Carregando pergunta...</p>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <button type="button" class="btn-option" id="btn-sim" onclick="selectAnswer('SIM')">SIM</button>
+            <button type="button" class="btn-option" id="btn-nao" onclick="selectAnswer('NÃO')">NÃO</button>
+        </div>
+
+        <button type="button" class="btn-primary" id="btn-next" onclick="confirmAndNext()" disabled>Confirmar e Avançar</button>
+    </div>
+
+    <!-- TELA 3: UPLOAD DAS 6 FOTOS -->
+    <div id="step-3" class="step">
+        <h3>Evidências Fotográficas (6 Fotos)</h3>
+        <p style="font-size: 13px; color: #666;">Selecione os arquivos correspondentes para a vistoria:</p>
+        <div class="form-grid">
+            <div class="form-group"><label>1. Foto da Frente</label><input type="file" accept="image/*"></div>
+            <div class="form-group"><label>2. Foto da Traseira</label><input type="file" accept="image/*"></div>
+            <div class="form-group"><label>3. Lateral do Motorista</label><input type="file" accept="image/*"></div>
+            <div class="form-group"><label>4. Lateral do Passageiro</label><input type="file" accept="image/*"></div>
+            <div class="form-group"><label>5. Painel Interno</label><input type="file" accept="image/*"></div>
+            <div class="form-group"><label>6. Hodômetro</label><input type="file" accept="image/*"></div>
+        </div>
+        <div style="margin-top: 25px;">
+            <button type="button" class="btn-primary" onclick="finishAudit()">Finalizar e Exportar Relatório</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "O veículo possui CRLV-e do ano em exercício devidamente emitido e acessível digitalmente ou impresso?",
+        "O licenciamento e IPVA (se aplicável/locado) estão com pagamentos em dia, sem débitos cadastrados no Detran-GO?",
+        "Os veículos próprios possuem registro patrimonial (tombamento) afixado de forma visível e legível?",
+        "A documentação do veículo locado inclui o Termo de Entrega/Vistoria assinado pelo fiscal do contrato na data do recebimento?",
+        "O veículo possui identificação visual padronizada (adesivação/caracterização oficial do Estado de Goiás) conforme o normativo estadual?",
+        "Há autorização prévia por escrito da locadora para adesivação ou instalação de acessórios no veículo contratado?",
+        "A categoria da CNH dos condutores cadastrados é compatível com o tipo de veículo conduzido (ex.: Cat. C, D, E)?",
+        "Há controle documental de multas de trânsito vinculando o auto de infração diretamente ao condutor responsável?",
+        "Existe portaria ou termo formal de autorização de uso assinado para todos os condutores que utilizam a frota?",
+        "O órgão mantém diário de bordo (físico ou eletrônico) preenchido com horários de saída/chegada, quilometragem e destino?",
+        "Os condutores passam por consulta periódica da situação da CNH na base do Detran-GO (verificação de suspensão/cassação)?",
+        "Há regramento formal e fiscalização sobre a proibição de uso de veículos oficiais fora do horário de expediente ou nos fins de semana?",
+        "Os veículos utilizados em regime de plantão/24h possuem escala oficial aprovada pela chefia imediata?",
+        "A guarda noturna e em finais de semana ocorre exclusivamente em pátios ou garagens oficiais previamente cadastradas?",
+        "A empresa locadora fornece condutores contratados?",
+        "A condução é feita exclusivamente por servidores/empregados públicos autorizados?",
+        "Há registro e controle de treinamento de direção defensiva e condução operacional para os motoristas da frota?",
+        "As manutenções preventivas dos veículos próprios são executadas dentro dos prazos/quilometragens estipulados pelo fabricante?",
+        "A locadora cumpre integralmente o plano de manutenção preventiva previsto em contrato sem gerar custos extras ao Estado?",
+        "O contrato com a locadora prevê a substituição do veículo em manutenção (carro reserva) em até 24/48 horas?",
+        "Existe registro histórico individualizado de peças substituídas e serviços executados em cada veículo próprio?",
+        "O estado geral dos pneus (profundidade dos sulcos/TCI) atende às exigências mínimas de segurança estabelecidas pelo Contran?",
+        "O estepe, macaco, chave de roda e triângulo de sinalização estão presentes, funcionais e adequados ao veículo?",
+        "Para veículos novos próprios, as revisões em concessionárias autorizadas estão sendo cumpridas para manutenção da garantia de fábrica?",
+        "O sistema de iluminação (faróis, lanternas, setas, luz de freio e ré) encontra-se 100% operacional?",
+        "Há verificação periódica de fluidos (óleo do motor, líquido de arrefecimento, fluido de freio) documentada no checklist diário?",
+        "O abastecimento da frota é realizado obrigatoriamente por meio de cartão magnético/sistema de gestão de combustível contratado pelo Estado?",
+        "Cada veículo possui um único cartão de abastecimento atrelado à sua placa e com limite mensal cadastrado?",
+        "No momento do abastecimento, o sistema exige a digitação da quilometragem correta e matrícula do condutor?",
+        "O órgão realiza relatório mensal de média de consumo (km/l) por veículo e identifica desvios acima de 15% do padrão de fábrica?",
+        "O custo de combustível dos veículos locados está segregado e auditado separadamente do valor da fatura de locação?",
+        "O abastecimento de veículos próprios flex prioriza o biocombustível (etanol) quando a paridade de preço for economicamente viável?",
+        "Há fiscalização quanto a divergências entre a capacidade do tanque de combustível do veículo e a quantidade informada na nota fiscal/extrato?",
+        "Os veículos a diesel (se aplicável) utilizam Arla 32 em conformidade com as exigências ambientais (Proconve)?",
+        "O veículo possui rastreador/telemetria (GPS/GPRS) instalado e transmitindo dados em tempo real?",
+        "O contrato de locação exige e disponibiliza acesso direto ao portal de rastreamento e telemetria da frota alugada?",
+        "O sistema de telemetria emite alertas em tempo real para eventos de excesso de velocidade e acelerações/frenagens bruscas?",
+        "Existe procedimento formal para notificação do condutor ao detectar alertas recorrentes de infração de condução via telemetria?",
+        "Os cercamentos eletrônicos (geofencing) estão parametrizados para alertar saídas não autorizadas do perímetro ou do estado?",
+        "O total acumulado de quilometragem no hodômetro físico confere com a medição registrada no sistema de rastreamento/telemetria?",
+        "Os dados de telemetria são mantidos em banco de dados seguro para fins de auditoria por no mínimo 5 anos?",
+        "A secretaria possui gestor e fiscal de contrato formalmente designados por portaria para o contrato de locação de veículos?",
+        "Os relatórios de medição mensal para pagamento da locação exigem comprovação de veículos efetivamente disponibilizados e operacionais?",
+        "O valor pago na franquia de quilometragem contratada é glosado em caso de ociosidade não justificável do veículo locado?",
+        "A depreciação anual dos veículos próprios é calculada e lançada no sistema contábil-patrimonial do Estado?",
+        "Veículos próprios que atingiram a vida útil limite ou com custo de manutenção inviável estão catalogados em processo de alienação/leilão?",
+        "Todos os veículos (próprios e locados) possuem seguro total (RCF/DPVAT/casco) ativo com cobertura contra terceiros?",
+        "Em caso de sinistro, há processo administrativo instaurado para apuração de responsabilidade e ressarcimento de avarias ao erário?",
+        "A secretaria mantém um indicador mensal atualizado de Custo Total de Propriedade/Uso (TCO) por quilômetro rodado (R$/km)?",
+        "O índice de ociosidade da frota (veículos sem movimentação superior a 15 dias corridos) é monitorado e reportado à área central?",
+        "Há relatórios consolidados comparativos demonstrando a viabilidade econômica do modelo Próprio vs. Locado para cada categoria de veículo?"
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswer = null;
+    let auditData = { vehicle: {}, answers: [] };
+
+    function toggleVinculoRules() {
+        const v = document.getElementById('vinculo').value;
+        const tomb = document.getElementById('tombamento');
+        const sei = document.getElementById('sei');
+        if (v === 'Proprio') {
+            tomb.required = true;
+            sei.required = false;
+            document.getElementById('lbl-tombamento').innerText = "12. N.º de Tombamento (Obrigatório)";
+            document.getElementById('lbl-sei').innerText = "13. Processo SEI (Veículo Locado)";
+        } else if (v === 'Locado') {
+            tomb.required = false;
+            sei.required = true;
+            document.getElementById('lbl-tombamento').innerText = "12. N.º de Tombamento (Veículo Próprio)";
+            document.getElementById('lbl-sei').innerText = "13. Processo SEI (Obrigatório)";
+        }
+    }
+
+    function toggleInservivelRules() {
+        const ins = document.getElementById('inservivel').value;
+        const leilao = document.getElementById('leilao');
+        if (ins === 'Sim') {
+            leilao.required = true;
+            document.getElementById('lbl-leilao').innerText = "25. Procedimento para Leilão (Obrigatório)";
+        } else {
+            leilao.required = false;
+            document.getElementById('lbl-leilao').innerText = "25. Procedimento para Leilão";
+        }
+    }
+
+    function startAudit() {
+        const form = document.getElementById('vehicle-form');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Coleta dados
+        auditData.vehicle = {
+            sec: document.getElementById('sec').value,
+            placa: document.getElementById('placa').value,
+            vinculo: document.getElementById('vinculo').value
+        };
+
+        document.getElementById('step-1').classList.remove('active');
+        document.getElementById('step-2').classList.add('active');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        selectedAnswer = null;
+        document.getElementById('btn-sim').className = 'btn-option';
+        document.getElementById('btn-nao').className = 'btn-option';
+        document.getElementById('btn-next').disabled = true;
+
+        document.getElementById('question-text').innerText = (currentQuestionIndex + 1) + ". " + questions[currentQuestionIndex];
+        document.getElementById('counter-display').innerText = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        const pct = ((currentQuestionIndex + 1) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = pct + '%';
+    }
+
+    function selectAnswer(ans) {
+        selectedAnswer = ans;
+        if (ans === 'SIM') {
+            document.getElementById('btn-sim').className = 'btn-option selected-sim';
+            document.getElementById('btn-nao').className = 'btn-option';
+        } else {
+            document.getElementById('btn-sim').className = 'btn-option';
+            document.getElementById('btn-nao').className = 'btn-option selected-nao';
+        }
+        document.getElementById('btn-next').disabled = false;
+    }
+
+    function confirmAndNext() {
+        if (!selectedAnswer) return;
+        auditData.answers.push({ item: currentQuestionIndex + 1, resp: selectedAnswer });
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-3').classList.add('active');
+        }
+    }
+
+    function finishAudit() {
+        alert('Vistoria concluída com sucesso! Os dados foram processados para relatório.');
+        console.log(auditData);
+    }
+</script>
+
+</body>
+</html>
